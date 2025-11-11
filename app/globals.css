@@ -1,26 +1,128 @@
+/* app/globals.css (Version Corrigée et Unifiée) */
+
+/* ========================================================== */
+/*  1. IMPORTS & CONFIGURATION TAILWIND                       */
+/* ========================================================== */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  NOTE IMPORTANTE :
+  Les directives `@custom-variant` et `@theme inline` que vous aviez
+  sont des fonctionnalités avancées de Tailwind CSS qui nécessitent un fichier
+  `tailwind.config.ts` pour être interprétées. Dans une configuration sans
+  ce fichier, elles sont ignorées. La méthode ci-dessous utilise
+  uniquement les variables CSS standard, ce qui fonctionne parfaitement.
+*/
 
+
+/* ========================================================== */
+/*  2. PONT ENTRE LES CLASSES ET NOS VARIABLES (LE THÈME)      */
+/* ========================================================== */
 @theme inline {
+  /* On ne définit ici que les "rôles" que Tailwind doit connaître */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --radius: var(--radius);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+
+  --font-sans: "Source Sans Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
+
+/* ========================================================== */
+/*  3. DÉFINITION DES VARIABLES (VOTRE THÈME) ET STYLES DE BASE */
+/* ========================================================== */
+@layer base {
+  /*
+    C'est notre unique source de vérité pour les couleurs et les styles.
+    Toutes les variables que vous avez définies sont conservées ici.
+  */
+
+  /* THÈME CLAIR (PAR DÉFAUT) */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --radius: 0.5rem;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    
+    /* Couleurs de base */
+    --background: oklch(0.99 0 0);
+    --foreground: oklch(0.15 0.01 240);
+    
+    /* Couleurs de marque */
+    --primary: oklch(0.435 0.128 244.1);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(57.939% 0.14284 246.887);
+    --secondary-foreground: oklch(0.99 0 0);
+    --accent: oklch(82.996% 0.07486 234.309);
+    --accent-foreground: oklch(0.1 0 0);
+    
+    /* Couleurs fonctionnelles */
+    --muted: oklch(0.96 0.01 240);
+    --muted-foreground: oklch(0.45 0.01 240);
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --border: oklch(0.92 0.01 240);
+    --input: var(--border);
+    --ring: oklch(49.222% 0.23668 264.877);
+    --danger: oklch(60% 0.15 20);
+    --danger-foreground: oklch(0.99 0 0);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* THÈME SOMBRE */
+  .dark {
+    --background: oklch(0.15 0.01 240);
+    --foreground: oklch(0.96 0.01 240);
+    
+    --primary-foreground: oklch(0.1 0 0);
+    --secondary-foreground: oklch(0.1 0 0);
+    --accent-foreground: oklch(0.1 0 0);
+
+    --muted: oklch(0.20 0.01 240);
+    --muted-foreground: oklch(0.65 0.01 240);
+    --card: oklch(0.20 0.01 240);
+    --card-foreground: var(--foreground);
+    --border: oklch(1 0 0 / 15%);
+    --input: var(--border);
+    --ring: oklch(0.7 0.15 160);
+    --danger: oklch(75% 0.15 20);
+    --danger-foreground: oklch(0.1 0 0);
+  }
+
+  /*
+    Styles de base appliqués directement avec vos variables.
+    Nous n'utilisons PAS @apply ici car il est fait pour les classes Tailwind,
+    pas pour appliquer directement des variables CSS.
+  */
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
