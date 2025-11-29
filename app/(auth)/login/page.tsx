@@ -20,7 +20,7 @@ export default function LoginPage() {
   if (status === 'loading' || status === 'authenticated') {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Chargement...</p>
+        <p>Loading...</p>
       </div>
     );
   }

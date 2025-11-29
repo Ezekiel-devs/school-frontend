@@ -93,8 +93,69 @@ export interface Enrollment {
   updatedAt: string;
 }
 
-// Ajoutez d'autres interfaces pour Grade, Teach, Sequence, StudentFee, Payment
+export interface Sequence {
+  id: string;
+  name: string;
+  number: number;
+  yearId: string;
+  year?: AcademicYear; // Optionnel si chargé avec la relation
+  createdAt: string;
+  updatedAt: string;
+}
 
+export interface Teach {
+  id: string;
+  classId: string;
+  subjectId: string;
+  staffId: string;
+  academicYearId: string;
+  classroom?: Classroom;   // Relations optionnelles
+  subject?: Subject;
+  staff?: Staff;
+  academicYear?: AcademicYear;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Grade {
+  id: string;
+  value: number; // Prisma utilise Decimal, mais `number` est plus courant en JS/TS
+  studentId: string;
+  subjectId: string;
+  staffId: string;
+  sequenceId: string;
+  student?: Student;     // Relations optionnelles
+  subject?: Subject;
+  staff?: Staff;
+  sequence?: Sequence;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StudentFee {
+  id: string;
+  total: number;       // Decimal -> number
+  remaining: number;   // Decimal -> number
+  description: string;
+  studentId: string;
+  yearId: string;
+  student?: Student;
+  year?: AcademicYear;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Payment {
+  id: string;
+  amount: number;      // Decimal -> number
+  datePay: string;     // Ou Date
+  mode: Mode;
+  receiptNumber: number;
+  studentfeeId: string;
+  studentfee?: StudentFee;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Étend le type Session de NextAuth pour inclure les détails de votre utilisateur
 // C'est essentiel pour que TypeScript reconnaisse les propriétés supplémentaires comme `role`
@@ -110,6 +171,7 @@ declare module 'next-auth' {
       lastName: string;
       role: Role;
     } & DefaultSession['user']; // Garde les propriétés par défaut de DefaultSession['user']
+    backendToken?: string;
   }
 
   interface User {
@@ -118,6 +180,7 @@ declare module 'next-auth' {
     firstName: string;
     lastName: string;
     role: Role;
+    backendToken?: string;
     // Les autres propriétés comme le mot de passe ne sont PAS incluses ici
   }
 }

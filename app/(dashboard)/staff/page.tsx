@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/pageHeader';
 import { StaffTable } from '@/components/staff/staffTable';
 import { Card } from '@/components/ui/card';
+import { Suspense } from 'react';
+import { SkeletonTable } from '@/components/ui/skeletonTable';
 
 export default function StaffPage() {
   const { data: session } = useSession();
@@ -20,9 +22,9 @@ export default function StaffPage() {
     return (
       <Card>
         <div className="p-6 text-center">
-          <h2 className="text-xl font-semibold text-danger">Accès Refusé</h2>
+          <h2 className="text-xl font-semibold text-danger">Access denied</h2>
           <p className="mt-2 text-muted-foreground">
-            Vous avez pas les permissions pour gérer le personnel.
+            You do not have permission to manage staff.
           </p>
         </div>
       </Card>
@@ -31,13 +33,15 @@ export default function StaffPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Gestion du Personnel">
+      <PageHeader title="Personnel Management">
         <Link href="/staff/create">
-          <Button>Ajouter un membre</Button>
+          <Button>Add a member</Button>
         </Link>
       </PageHeader>
       
-      <StaffTable />
+      <Suspense fallback={<SkeletonTable />}>
+        <StaffTable />
+      </Suspense>
     </div>
   );
 }

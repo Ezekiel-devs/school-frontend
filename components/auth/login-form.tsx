@@ -40,7 +40,7 @@ export function LoginForm() {
       if (result?.error) {
         setLoginError(result.error);
       } else if (result?.ok) {
-        router.push('/dashboard');
+        router.push('/home');
       }
     } catch (error) {
       setLoginError('Une erreur inattendue est survenue.');
@@ -66,7 +66,7 @@ export function LoginForm() {
         </div>
 
         <div className="form-group">
-          <Label htmlFor="password">Mot de passe</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"
@@ -86,13 +86,13 @@ export function LoginForm() {
           className="w-full mt-4"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Connexion en cours...' : 'Se connecter'}
+          {isSubmitting ? 'Connexion in progress...' : 'Login'}
         </Button>
       </form>
       <p className="text-center mt-4" style={{ color: 'var(--muted-foreground)' }}>
-        Mot de passe oublié ?{' '}
+        Password Forgotten ?{' '}
         <Link href="/forgot-password" className="link">
-          Réinitialiser
+          Reset
         </Link>
       </p>
     </Card>

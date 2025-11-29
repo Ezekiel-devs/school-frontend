@@ -5,6 +5,10 @@ import { Role } from '@/types/type';
 import type { Staff } from '@/types/type';
 
 
+// type qui inclut à la fois les données de l'utilisateur ET le token du backend
+interface BackendUserResponse extends Staff {
+  token: string;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +21,7 @@ export const authOptions: NextAuthOptions = {
     
       async authorize(credentials): Promise<Staff | null> {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email et mot de passe sont requis');
+          throw new Error('An email address and password are required.');
         }
 
         try {
@@ -26,24 +30,24 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
 
-          const user = response.data;
+          const data = response.data; //infos sur le user...
 
-          if (user) {
-            return user;
+          if (data && data.token) {
+            return { ...data.user, backendToken: data.token };
           } else {
             return null;
           }
         } catch (error) {
           if (isAxiosError(error)) {
             
-            const errorMessage = error.response?.data?.message || 'Identifiants ou mot de passe invalides.';
+            const errorMessage = error.response?.data?.message || 'Invalid username or password.';
             console.error('Axios Error in authorize:', errorMessage);
             throw new Error(errorMessage);
           }
           
           
           console.error('Generic Error in authorize:', error);
-          throw new Error('Une erreur inattendue est survenue.');
+          throw new Error('An unexpected error has occurred.');
         }
       },
     }),
@@ -62,6 +66,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       // `user` est disponible seulement lors de la première connexion (appel `authorize`)
       if (user) {
+        token.backendToken = user.backendToken;
         const staffUser = user as Staff;
         token.id = staffUser.id;
         token.email = staffUser.email;
@@ -74,12 +79,13 @@ export const authOptions: NextAuthOptions = {
     // Le callback `session` est appelé chaque fois qu'une session est vérifiée
     async session({ session, token }) {
       // `token` contient les données enrichies par le callback `jwt`
-      if (session.user && token.id) {
+      if (session.user && token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
         session.user.role = token.role as Role;
+        session.backendToken = token.backendToken as string;
       }
       return session;
     },

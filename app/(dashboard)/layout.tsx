@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Navbar } from '@/components/layout/navbar';
+import { Toaster } from 'sonner';
 
 export default function DashboardLayout({
   children,
@@ -16,7 +17,7 @@ export default function DashboardLayout({
   if (status === 'loading') {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <p>Chargement...</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -26,7 +27,10 @@ export default function DashboardLayout({
       <Sidebar />
       <div className="flex flex-1 flex-col">
         <Navbar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-6">
+          {children}
+          <Toaster richColors position="top-right" />
+        </main>
       </div>
     </div>
   );

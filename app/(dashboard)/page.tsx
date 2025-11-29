@@ -7,15 +7,15 @@ export default function DashboardPage() {
 
   return (
     <div className="card">
-      <h1 className="text-2xl font-bold mb-4">Tableau de Bord Principal</h1>
+      <h1 className="text-2xl font-bold mb-4">TMain Dashboard</h1>
       <p>
-        Bonjour, {session?.user?.firstName} {session?.user?.lastName}.
+        Hello, {session?.user?.firstName} {session?.user?.lastName}.
       </p>
       <p>
-        Vous êtes connecté en tant que : <strong>{session?.user?.role}</strong>.
+        You are logged in as : <strong>{session?.user?.role}</strong>.
       </p>
       <p className="mt-4">
-        Ceci est la page accueil de votre espace administration. Vous pouvez naviguer en utilisant le menu latéral.
+        This is the home page of your administration area. You can navigate using the side menu.
       </p>
     </div>
   );

@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Role } from '@/types/type';
+import { AcademicYear, Role } from '@/types/type';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 
 // Définir la structure d'un lien de navigation
 interface NavLink {
@@ -18,25 +20,37 @@ const navLinks: NavLink[] = [
   { href: '/home', label: 'Tableau de bord', isVisible: () => true },
   { href: '/students', label: 'Élèves', isVisible: () => true }, // Visible par tous les rôles
   {
-    href: '/classes',
-    label: 'Classes & Matières',
+    href: '/academic-year',
+    label: 'Academic Year',
+    isVisible: (role) =>
+      role === Role.DIRECTOR || role === Role.ADMIN || role === Role.SUPER_ADMIN,
+  },
+  {
+    href: '/classrooms',
+    label: 'Class',
+    isVisible: (role) =>
+      role === Role.DIRECTOR || role === Role.ADMIN || role === Role.SUPER_ADMIN,
+  },
+  {
+    href: '/subjects',
+    label: 'Subject',
     isVisible: (role) =>
       role === Role.DIRECTOR || role === Role.ADMIN || role === Role.SUPER_ADMIN,
   },
   {
     href: '/staff',
-    label: 'Personnel',
+    label: 'Staff',
     isVisible: (role) => role === Role.ADMIN || role === Role.SUPER_ADMIN,
   },
   {
-    href: '/fees',
-    label: 'Finances',
+    href: '/grades',
+    label: 'grades',
     isVisible: (role) =>
       role === Role.DIRECTOR || role === Role.ADMIN || role === Role.SUPER_ADMIN,
   },
   {
     href: '/reports',
-    label: 'Rapports',
+    label: 'Reports',
     isVisible: (role) =>
       role === Role.DIRECTOR || role === Role.ADMIN || role === Role.SUPER_ADMIN,
   },
@@ -46,6 +60,17 @@ export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
+
+  const { data: currentYear } = useQuery<AcademicYear>({
+    queryKey: ['currentAcademicYear'],
+    queryFn: async () => {
+        const response = await api.get('/year/current');
+        console.log(currentYear)
+        return response.data;
+    },
+    // On ne veut pas que ça se rafraîchisse trop souvent
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   return (
     <aside className="hidden w-64 flex-col border-r bg-background sm:flex">
@@ -72,6 +97,25 @@ export function Sidebar() {
               {link.label}
             </Link>
           ) : null
+        )}
+
+        {/* --- LIEN DYNAMIQUE POUR LES SÉQUENCES --- */}
+        {/* On affiche le lien seulement si on a une année actuelle et si l'utilisateur a le bon rôle */}
+        {currentYear && (userRole === Role.DIRECTOR || userRole === Role.ADMIN || userRole === Role.SUPER_ADMIN) && (
+          <>
+            <Link
+              href={`/academic-year/${currentYear.id}/sequences`}
+              className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all
+                ${
+                  pathname.startsWith(`/academic-year/${currentYear.id}/sequences`)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-primary'
+                }`}
+            >
+              Sequences (Current)
+            </Link>
+            <p>{currentYear.label}</p>
+          </>
         )}
       </nav>
     </aside>
